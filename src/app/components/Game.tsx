@@ -8,8 +8,9 @@ export interface ILocationClick {
 }
 
 export interface IPropsGameData {
-    countRows: number,
-    countCells: number
+    countRows: number;
+    countCells: number;
+    startPlayer: GameToken;
 }
 
 export interface IStateGameData {
@@ -17,23 +18,44 @@ export interface IStateGameData {
 }
 
 export class Game extends React.Component<IPropsGameData, IStateGameData> {
+    private currentPlayer: GameToken;
+
     constructor(props: IPropsGameData) {
         super(props);
 
+        this.currentPlayer = this.props.startPlayer;
         this.state = {
             table: this.createTable()
         }
     }
 
-    private onClickCellHandler(location: ILocationClick) {
-        this.setState((prevState => {
-            const tempTable = prevState.table.slice();
-            tempTable[location.row][location.cell] = GameToken.O;
+    private switchCurrentPlayer(): void {
+        this.currentPlayer = this.currentPlayer === GameToken.X ? GameToken.O : GameToken.X;
+    }
 
+    private isInsertedLocationEmpty(location: ILocationClick): boolean {
+        const token = this.state.table[location.row][location.cell];
+        return token === GameToken.EMPTY;
+    }
+
+    private updateTable(location: ILocationClick, player: GameToken): void {
+        if (!this.isInsertedLocationEmpty(location)) {
+            return;
+        }
+
+        const tempTable = this.state.table.slice();
+        tempTable[location.row][location.cell] = player;
+        this.switchCurrentPlayer();
+
+        this.setState(() => {
             return {
                 table: tempTable
             }
-        }));
+        });
+    }
+
+    private onClickCellHandler(location: ILocationClick) {
+        this.updateTable(location, this.currentPlayer);
     }
 
     /**
