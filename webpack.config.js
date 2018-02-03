@@ -28,8 +28,7 @@ module.exports = {
                 use: ExtractTextPlugin.extract(
                     {
                         fallback: "style-loader",
-                        use:'app.css-loader'
-
+                        use:'css-loader'
                     })
             }
         ]
