@@ -12,3 +12,7 @@
     text-align: center;
     width: 34px;
 }
+
+.tic-tac-toe-cell:hover {
+    cursor: pointer;
+}

@@ -1,13 +1,14 @@
 import '../css/row.css'
 
 import * as React from "react";
-import { GameToken } from "../game/GameToken";
+import {GameToken} from "../game/GameToken";
 import {Cell} from "./Cell";
 
 
 export interface IPropsRowData {
-    token: GameToken;
-    countCells: number
+    cells: GameToken[];
+    id: number;
+    onClickCellHandler: (idRow: number, idCell: number) => void;
 }
 
 export interface IStateRowData {
@@ -18,13 +19,29 @@ export class Row extends React.Component<IPropsRowData, IStateRowData> {
         super(props);
     }
 
-    private createCells (): Array<React.ReactNode> {
-        let cells: Array<React.ReactNode> = [];
-        for (let i = 0; i < this.props.countCells; i++) {
-            cells.push(
-                <Cell key={i} token={this.props.token}/>
-            )
-        }
+    /**
+     * If click is registered in CellComponent, call this method as callback.
+     * @param {number} idCell identificator of particular cell location.
+     */
+    private onClickCellHandler(idCell: number): void {
+        this.props.onClickCellHandler(this.props.id, idCell);
+    }
+
+    /**
+     * Create a particular number of cell.
+     * @returns {Array<React.ReactNode>} cells
+     */
+    private createCells(): Array<React.ReactNode> {
+        const cellsTemp: GameToken[] = this.props.cells.slice();
+        const cells: Array<React.ReactNode> = [];
+
+        cellsTemp.forEach((token, index) => {
+            cells.push(<Cell key={index}
+                             id={index}
+                             token={token}
+                             onClickCellHandler={this.onClickCellHandler.bind(this)}/>);
+        });
+
         return cells;
     }
 
