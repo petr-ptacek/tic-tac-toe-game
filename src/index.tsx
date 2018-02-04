@@ -8,6 +8,9 @@ import {GameToken} from "./app/game/GameToken";
 const rootElement = document.getElementById("root");
 
 ReactDOM.render(
-    <Game countRows={5} countCells={5} startPlayer={GameToken.X}/>,
+    <Game rowWinLength={5}
+          countRows={5}
+          countCells={5}
+          startPlayer={GameToken.X}/>,
     rootElement
 );
