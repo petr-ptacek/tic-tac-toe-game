@@ -10,8 +10,7 @@ export interface ILocationClick {
 }
 
 export interface IPropsGameData {
-    countRows: number;
-    countCells: number;
+    tableSize: number;
     startPlayer: GameToken;
     rowWinLength: number;
 }
@@ -29,8 +28,7 @@ export class Game extends React.Component<IPropsGameData, IStateGameData> {
 
         this.calculation = new Calculations({
             startPlayer: this.props.startPlayer,
-            countCells: this.props.countCells,
-            countRows: this.props.countRows,
+            tableSize: this.props.tableSize,
             rowWinLength: this.props.rowWinLength
         });
 
@@ -59,6 +57,9 @@ export class Game extends React.Component<IPropsGameData, IStateGameData> {
 
         if (gameResult === GameResult.Win) {
             document.getElementById('message').innerHTML = "Win: " + this.calculation.getCurrentPlayer();
+            return;
+        } else if (gameResult === GameResult.Draw) {
+            document.getElementById('message').innerHTML = "Draw";
             return;
         }
 

@@ -9,8 +9,7 @@ const rootElement = document.getElementById("root");
 
 ReactDOM.render(
     <Game rowWinLength={5}
-          countRows={5}
-          countCells={5}
+          tableSize={5}
           startPlayer={GameToken.X}/>,
     rootElement
 );

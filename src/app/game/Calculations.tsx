@@ -5,8 +5,7 @@ import {Direction} from "./Direction";
 import {Coords} from "./Coords";
 
 export interface IGameOptions {
-    countRows: number;
-    countCells: number;
+    tableSize: number;
     startPlayer: GameToken;
     rowWinLength: number;
 }
@@ -35,14 +34,16 @@ export class Calculations {
 
     private currentPlayer: GameToken;
     private readonly rowWinLength: number;
-    private countRows: number;
-    private countCells: number;
+    private readonly tableSize: number;
+    private totalRowsCount: number;
 
     constructor(gameOptions: IGameOptions) {
-        this.countRows = gameOptions.countRows;
-        this.countCells = gameOptions.countCells;
+        this.tableSize = gameOptions.tableSize;
         this.currentPlayer = gameOptions.startPlayer;
         this.rowWinLength = gameOptions.rowWinLength;
+
+        this.totalRowsCount = 4 * ((2 * this.tableSize - (this.rowWinLength - 1)) *
+            (this.tableSize - (this.rowWinLength - 1)));
 
         this.tokenInRow = this.clearTokensInRow();
     }
@@ -57,9 +58,9 @@ export class Calculations {
         let temp: GameToken[] = [],
             i: number, j: number;
 
-        for (i = 0; i < this.countRows; i++) {
+        for (i = 0; i < this.tableSize; i++) {
             temp = [];
-            for (j = 0; j < this.countCells; j++) {
+            for (j = 0; j < this.tableSize; j++) {
                 temp.push(GameToken.EMPTY);
             }
             table[i] = temp;
@@ -70,7 +71,6 @@ export class Calculations {
 
     public addToken(location: ILocationClick, callbackUpdateTable: (location: ILocationClick) => void): GameResult {
         let result: GameResult = GameResult.Continue;
-        console.log("X" + location.x + " Y: " + location.y)
 
         for (let direction = Direction.Z; direction <= Direction.SV; direction++) {
             for (let pos = 0; pos < this.rowWinLength; pos++) {
@@ -79,11 +79,11 @@ export class Calculations {
                 let posX = location.x + pos * directHor;
                 let posY = location.y + pos * directVer;
 
-                if (((directHor === -1 && posX >= 0 && posX <= this.countCells - this.rowWinLength) ||
-                        (directHor === 1 && posX >= this.rowWinLength - 1 && posX < this.countCells) ||
+                if (((directHor === -1 && posX >= 0 && posX <= this.tableSize - this.rowWinLength) ||
+                        (directHor === 1 && posX >= this.rowWinLength - 1 && posX < this.tableSize) ||
                         (directHor === 0)) &&
-                    ((directVer === -1 && posY >= 0 && posY <= this.countCells - this.rowWinLength) ||
-                        (directVer === 1 && posY >= this.rowWinLength - 1 && posY < this.countCells) ||
+                    ((directVer === -1 && posY >= 0 && posY <= this.tableSize - this.rowWinLength) ||
+                        (directVer === 1 && posY >= this.rowWinLength - 1 && posY < this.tableSize) ||
                         (directVer === 0))) {
                     result = this.includeInsertToken(posX, posY, direction);
                     if (result !== GameResult.Continue) {
@@ -96,15 +96,19 @@ export class Calculations {
             }
         }
         callbackUpdateTable(location);
+
+        if (result === GameResult.Continue && this.totalRowsCount <= 0)
+            result = GameResult.Draw;
+
         return result;
     }
 
     private clearTokensInRow(): number[][][][] {
         let result: number[][][][] = [];
 
-        for (let i = 0; i < this.countRows; i++) {
+        for (let i = 0; i < this.tableSize; i++) {
             result[i] = [];
-            for (let j = 0; j < this.countCells; j++) {
+            for (let j = 0; j < this.tableSize; j++) {
                 result[i][j] = [];
                 for (let direction = Direction.Z; direction <= Direction.SV; direction++) {
                     result[i][j][direction] = [];
@@ -119,7 +123,10 @@ export class Calculations {
 
     public includeInsertToken(posX: number, posY: number, direction: Direction): GameResult {
         this.tokenInRow[posX][posY][direction][this.currentPlayer]++;
-        console.log("Count: " + this.tokenInRow[posX][posY][direction][this.currentPlayer]);
+
+        if (this.tokenInRow[posX][posY][direction][this.currentPlayer] === 1)
+            this.totalRowsCount--;
+
         return this.tokenInRow[posX][posY][direction][this.currentPlayer] === this.rowWinLength ?
             GameResult.Win :
             GameResult.Continue;
@@ -153,19 +160,7 @@ export class Calculations {
         return this.currentPlayer;
     }
 
-    public getCountRows(): number {
-        return this.countRows;
-    }
-
-    public setCountRows(value: number): void {
-        this.countRows = value;
-    }
-
-    public getCountCells(): number {
-        return this.countCells;
-    }
-
-    public setCountCells(value: number): void {
-        this.countCells = value;
+    public getTableSize(): number {
+        return this.tableSize;
     }
 }
