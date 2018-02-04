@@ -17,10 +17,21 @@ export class Cell extends React.Component<IPropsCellData, IStateCellData> {
     }
 
     render(): React.ReactNode {
+        let token: string = "";
+
+        switch (this.props.token) {
+            case GameToken.X:
+                token = "X";
+                break;
+            case GameToken.O:
+                token = "O";
+                break;
+        }
+
         return (
             <div className={"tic-tac-toe-cell"}
                  onClick={() => this.props.onClickCellHandler(this.props.id)}>
-                {this.props.token}
+                {token}
             </div>
         );
     }

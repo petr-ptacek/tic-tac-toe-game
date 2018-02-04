@@ -24,8 +24,8 @@ export class Board extends React.Component<IPropsBoardData, IStateBoardData> {
      */
     private onClickCellHandler(rowId: number, cellId: number) {
         const location: ILocationClick = {
-            row: rowId,
-            cell: cellId
+            x: rowId,
+            y: cellId
         };
         this.props.onClickCellHandler(location);
     }

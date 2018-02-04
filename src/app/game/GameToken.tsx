@@ -1,5 +1,5 @@
 export const enum GameToken {
-    X = "X",
-    O = "O",
-    EMPTY = ""
+    X = 0,
+    O = 1,
+    EMPTY = 2
 }
