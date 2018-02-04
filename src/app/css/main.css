@@ -1,3 +1,6 @@
+/*@import url('https://fonts.googleapis.com/css?family=Merriweather');*/
+@import url('https://fonts.googleapis.com/css?family=Indie+Flower|Merriweather');
+
 * {
     padding: 0;
     margin: 0;
@@ -6,5 +9,46 @@
 
 body {
     font: 14px "Century Gothic", Futura, sans-serif;
-    margin: 20px;
+}
+
+.clear-fix:after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+.float-left {
+    float: left;
+}
+
+.width-50 {
+    width: 50%;
+}
+
+.width-20 {
+    width: 20%;
+}
+
+/*Game Component */
+
+.gameComponent {
+    width: 79%;
+    float: left;
+    padding-left: 25px;
+}
+
+/*GameOptions Component*/
+
+.gameContainer {
+    width: 90%;
+    margin: 0px auto;
+}
+
+/*Main Header*/
+.main-header {
+    font-size: 50px;
+    margin-bottom: 10px;
+    text-align: center;
+    display: block;
+    font-family: "Indie Flower", cursive, "Merriweather", serif;
 }

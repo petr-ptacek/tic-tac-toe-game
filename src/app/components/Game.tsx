@@ -68,7 +68,7 @@ export class Game extends React.Component<IPropsGameData, IStateGameData> {
 
     render(): React.ReactNode {
         return (
-            <div>
+            <div className={"gameComponent"}>
                 <Board table={this.state.table}
                        onClickCellHandler={this.onClickCellHandler.bind(this)}/>
             </div>

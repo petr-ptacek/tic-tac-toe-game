@@ -1,15 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './app/css/main.css';
-
-import {Game} from "./app/components/Game";
-import {GameToken} from "./app/game/GameToken";
+import {GameContainer} from "./app/components/GameContainer";
 
 const rootElement = document.getElementById("root");
-
+// {/*<Game tableSize={5} rowWinLength={5} startPlayer={GameToken.X}/>,*/}
 ReactDOM.render(
-    <Game rowWinLength={5}
-          tableSize={5}
-          startPlayer={GameToken.X}/>,
+    <GameContainer/>,
     rootElement
 );
