@@ -4,16 +4,21 @@ import {GameToken} from "../game/GameToken";
 
 export interface IPropsCellData {
     token: GameToken;
-    id: number,
-    onClickCellHandler: (idCell: number) => void
+    id: number;
+    playGame: boolean;
+    onClickCellHandler: (idCell: number) => void;
 }
 
 export interface IStateCellData {
+    classClicked: string;
 }
 
 export class Cell extends React.Component<IPropsCellData, IStateCellData> {
     constructor(props: IPropsCellData) {
         super(props);
+        this.state = {
+            classClicked: ""
+        };
     }
 
     render(): React.ReactNode {
@@ -29,8 +34,17 @@ export class Cell extends React.Component<IPropsCellData, IStateCellData> {
         }
 
         return (
-            <div className={"tic-tac-toe-cell"}
-                 onClick={() => this.props.onClickCellHandler(this.props.id)}>
+            <div className={"tic-tac-toe-cell empty-cell" + this.state.classClicked}
+                 onClick={() => {
+                     if (this.props.playGame) {
+                         this.props.onClickCellHandler(this.props.id);
+                         this.setState(() => {
+                             return {
+                                 classClicked: " full-cell"
+                             }
+                         });
+                     }
+                 }}>
                 {token}
             </div>
         );

@@ -3,12 +3,13 @@ Form style*/
 
 .form-style-1 {
     /*margin: 10px auto;*/
-    width: 20%;
+    max-width: 200px;
     padding: 20px 12px 10px 20px;
     font: 13px "Lucida Sans Unicode", "Lucida Grande", sans-serif;
     border: 1px dashed #999999;
     border-radius: 15px;
     float: left;
+    margin-right: 5px;
 }
 
 .form-style-1 legend {
@@ -55,6 +56,10 @@ select {
     outline: none;
 }
 
+.form-style-1 select:disabled, .form-style-1 input[type=checkbox]:disabled {
+    background-color: #BEBEBE;
+}
+
 .form-style-1 input[type=text]:focus,
 .form-style-1 input[type=date]:focus,
 .form-style-1 input[type=datetime]:focus,
@@ -95,6 +100,14 @@ select {
     color: #fff;
 }
 
+.form-style-1 input[type=button].btn-disabled {
+    background-color: #BEBEBE;
+}
+
+.form-style-1 input[type=button].btn-disabled:hover {
+    background-color: #999999;
+}
+
 .form-style-1 input[type=submit]:hover, .form-style-1 input[type=button]:hover {
     background: #4691A4;
     box-shadow: none;
@@ -109,6 +122,11 @@ select {
 .form-style-1 .check-box {
     display: block;
     width: 100%;
+}
+
+.btn {
+    width: 100%;
+    display: block;
 }
 
 /*End Form Style */

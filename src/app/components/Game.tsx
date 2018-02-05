@@ -13,6 +13,8 @@ export interface IPropsGameData {
     tableSize: number;
     startPlayer: GameToken;
     rowWinLength: number;
+    playGame: boolean;
+    tableWidth: number;
 }
 
 export interface IStateGameData {
@@ -25,17 +27,33 @@ export class Game extends React.Component<IPropsGameData, IStateGameData> {
 
     constructor(props: IPropsGameData) {
         super(props);
-
         this.calculation = new Calculations({
             startPlayer: this.props.startPlayer,
             tableSize: this.props.tableSize,
-            rowWinLength: this.props.rowWinLength
+            rowWinLength: this.props.rowWinLength,
         });
 
         this.state = {
             table: this.calculation.createTable()
         };
+    }
 
+    componentWillReceiveProps(nextProps: Readonly<IPropsGameData>, nextContext: any): void {
+        this.updateComponent(nextProps);
+    }
+
+    private updateComponent(nextProps: Readonly<IPropsGameData>) {
+        this.calculation = new Calculations({
+            startPlayer: nextProps.startPlayer,
+            tableSize: nextProps.tableSize,
+            rowWinLength: nextProps.rowWinLength
+        });
+
+        this.setState(() => {
+            return {
+                table: this.calculation.createTable()
+            }
+        });
     }
 
     private updateTable(location: ILocationClick): void {
@@ -68,8 +86,9 @@ export class Game extends React.Component<IPropsGameData, IStateGameData> {
 
     render(): React.ReactNode {
         return (
-            <div className={"gameComponent"}>
+            <div className={"gameComponent"} style={{width: this.props.tableWidth}}>
                 <Board table={this.state.table}
+                       playGame={this.props.playGame}
                        onClickCellHandler={this.onClickCellHandler.bind(this)}/>
             </div>
         );

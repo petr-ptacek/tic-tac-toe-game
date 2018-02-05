@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack-dev-server --port 8000",
+    "build": "webpack-dev-server --port 8080",
     "build:prod": "webpack -p"
   },
   "keywords": [

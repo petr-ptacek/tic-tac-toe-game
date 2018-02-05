@@ -8,6 +8,7 @@ import {Cell} from "./Cell";
 export interface IPropsRowData {
     cells: GameToken[];
     id: number;
+    playGame: boolean;
     onClickCellHandler: (idRow: number, idCell: number) => void;
 }
 
@@ -39,6 +40,7 @@ export class Row extends React.Component<IPropsRowData, IStateRowData> {
             cells.push(<Cell key={index}
                              id={index}
                              token={token}
+                             playGame={this.props.playGame}
                              onClickCellHandler={this.onClickCellHandler.bind(this)}/>);
         });
 

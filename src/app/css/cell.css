@@ -1,5 +1,4 @@
 .tic-tac-toe-cell {
-    background: #fff;
     border: 1px solid #999;
     float: left;
     font-size: 24px;
@@ -15,4 +14,17 @@
 
 .tic-tac-toe-cell:hover {
     cursor: pointer;
+}
+
+.empty-cell {
+    background: #fff;
+}
+
+.empty-cell:hover {
+    background: #88D5E9;
+}
+
+.full-cell:hover {
+    background-color: rgba(200, 0, 0, 0.2);
+    cursor: auto;
 }

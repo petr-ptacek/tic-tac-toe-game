@@ -6,6 +6,7 @@ import {ILocationClick} from "./Game";
 export interface IPropsBoardData {
     table: GameToken[][];
     onClickCellHandler: (location: ILocationClick) => void;
+    playGame: boolean;
 }
 
 export interface IStateBoardData {
@@ -38,6 +39,7 @@ export class Board extends React.Component<IPropsBoardData, IStateBoardData> {
             rows.push(<Row key={index}
                            cells={tableRow}
                            id={index}
+                           playGame={this.props.playGame}
                            onClickCellHandler={this.onClickCellHandler.bind(this)}/>);
         });
 
