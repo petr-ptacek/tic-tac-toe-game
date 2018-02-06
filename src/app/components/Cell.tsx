@@ -22,7 +22,8 @@ export class Cell extends React.Component<IPropsCellData, IStateCellData> {
     }
 
     render(): React.ReactNode {
-        let token: string = "";
+        let token: string;
+        let classStyles: string;
 
         switch (this.props.token) {
             case GameToken.X:
@@ -33,8 +34,15 @@ export class Cell extends React.Component<IPropsCellData, IStateCellData> {
                 break;
         }
 
+        if (!this.props.playGame) {
+            classStyles = "tic-tac-toe-cell";
+        } else {
+            classStyles = "tic-tac-toe-cell" + this.state.classClicked;
+            classStyles += this.props.playGame ? " empty-cell" : "";
+        }
+
         return (
-            <div className={"tic-tac-toe-cell empty-cell" + this.state.classClicked}
+            <div className={classStyles}
                  onClick={() => {
                      if (this.props.playGame) {
                          this.props.onClickCellHandler(this.props.id);
