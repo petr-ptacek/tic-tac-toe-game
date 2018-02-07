@@ -152,15 +152,7 @@ export class Calculations {
         return result;
     }
 
-    public getRowLength(): number {
-        return this.rowWinLength;
-    }
-
     public getCurrentPlayer(): GameToken {
         return this.currentPlayer;
-    }
-
-    public getTableSize(): number {
-        return this.tableSize;
     }
 }

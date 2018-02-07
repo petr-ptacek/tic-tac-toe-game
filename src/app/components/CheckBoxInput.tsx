@@ -9,12 +9,10 @@ export interface IStateCheckBoxInputData {
 
 }
 
-
 export class CheckBoxInput extends React.Component<IPropsCheckBoxInputData, IStateCheckBoxInputData> {
     constructor(props: IPropsCheckBoxInputData) {
         super(props);
     }
-
 
     render(): React.ReactNode {
         return (

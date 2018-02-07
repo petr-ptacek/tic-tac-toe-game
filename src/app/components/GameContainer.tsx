@@ -3,10 +3,14 @@ import {GameOptionsForm} from "./GameOptionsForm";
 import {Game} from "./Game";
 import {GameToken} from "../game/GameToken";
 import {Header} from "./Header";
+import {GameResult} from "../game/GameResult";
+import {GameNotification} from "./GameNotification";
+import {Simulate} from "react-dom/test-utils";
+import play = Simulate.play;
 
 export interface GameOptionsProperties {
-    player1: GameToken;
-    player2: GameToken;
+    player1: string;
+    player2: string;
     rowWinLength: number;
     tableSize: number;
     playWithComputer: boolean;
@@ -18,11 +22,12 @@ export interface GameOptionsProperties {
 }
 
 export interface IPropsGameContainer {
-
 }
 
 export interface IStateGameContainer extends GameOptionsProperties {
     playGame: boolean;
+    gameNotification: string;
+    createNewCalculationInstance: boolean;
 }
 
 export class GameContainer extends React.Component<IPropsGameContainer, IStateGameContainer> {
@@ -34,40 +39,103 @@ export class GameContainer extends React.Component<IPropsGameContainer, IStateGa
             isButtonCancelDisabled: true,
             isButtonOKDisabled: false,
             isInputsDisabled: false,
-            player1: GameToken.X,
-            player2: GameToken.O,
+            player1: "X",
+            player2: "O",
             playWithComputer: false,
             rowWinLength: 5,
             tableSize: 5,
-            playGame: false
+            playGame: false,
+            createNewCalculationInstance: true,
+            gameNotification: "To start game, click to Play Game."
         }
     }
 
+    private onGameStateChangeHandler(gameResult: GameResult, currentPlayer: GameToken) {
+
+        switch (gameResult) {
+            case GameResult.Win:
+                this.setState(() => {
+                    return {
+                        gameNotification: ("Win Player: " + (currentPlayer === GameToken.O ? "O" : "X")),
+                        playGame: false,
+                        isButtonCancelDisabled: true,
+                        isButtonOKDisabled: false,
+                        isInputsDisabled: false,
+                        createNewCalculationInstance: true,
+                    };
+                });
+                break;
+            case  GameResult.Draw:
+                this.setState(() => {
+                    return {
+                        gameNotification: "Hops, the game is Draw.",
+                        playGame: false,
+                        isInputsDisabled: false,
+                        isButtonCancelDisabled: true,
+                        isButtonOKDisabled: false,
+                        createNewCalculationInstance: true
+                    }
+                });
+                break;
+            case GameResult.Continue:
+                console.log(currentPlayer === GameToken.O ? "O" : "X");
+                this.setState(() => {
+                    return {
+                        gameNotification: "Current player: " + (currentPlayer === GameToken.O ? "O" : "X"),
+                        createNewCalculationInstance: false
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+    }
+
+    private gameStart() {
+        this.setState(() => {
+            return {
+                gameNotification: "Current player: " + this.state.player1,
+                playGame: true,
+                isButtonOKDisabled: true,
+                isInputsDisabled: true,
+                isButtonCancelDisabled: false
+            }
+        });
+    }
+
+    private gameEnd() {
+        this.setState(() => {
+            return {
+                gameNotification: "To start game, click to Play Game.",
+                playGame: false,
+                isButtonCancelDisabled: true,
+                isInputsDisabled: false,
+                isButtonOKDisabled: false,
+                createNewCalculationInstance: true
+            }
+        });
+    }
+
+    /**
+     * If is clicked on the button.
+     * @param {string} id identification of the button.
+     */
     private onButtonClickHandler(id: string) {
         switch (id) {
             case "#btn-ok":
-                this.setState(() => {
-                    return {
-                        playGame: true,
-                        isButtonOKDisabled: true,
-                        isInputsDisabled: true,
-                        isButtonCancelDisabled: false
-                    }
-                });
+                this.gameStart();
                 break;
             case "#btn-cancel":
-                this.setState(() => {
-                    return {
-                        playGame: false,
-                        isButtonCancelDisabled: true,
-                        isInputsDisabled: false,
-                        isButtonOKDisabled: false
-                    }
-                });
+                this.gameEnd();
                 break;
         }
     }
 
+    /**
+     * If any input is changed from user, there is the handler.
+     * @param {string} id identification of which input has been changed
+     * @param {string} value the new changed value
+     */
     private onChangeInputHandler(id: string, value: string) {
         switch (id) {
             case "#table-size":
@@ -87,22 +155,26 @@ export class GameContainer extends React.Component<IPropsGameContainer, IStateGa
             case "#player-1":
                 this.setState(() => {
                     return {
-                        player1: value === "X" ? GameToken.X : GameToken.O,
-                        player2: value === "X" ? GameToken.O : GameToken.X
+                        player1: value === "X" ? "X" : "O",
+                        player2: value === "X" ? "O" : "X"
                     };
                 });
                 break;
             case "#player-2":
                 this.setState(() => {
                     return {
-                        player1: value === "X" ? GameToken.O : GameToken.X,
-                        player2: value === "X" ? GameToken.X : GameToken.O
+                        player1: value === "X" ? "O" : "X",
+                        player2: value === "X" ? "X" : "O"
                     };
                 });
                 break;
         }
     }
 
+    /**
+     * Calculate the width of the table.
+     * @returns {number}
+     */
     private calculateTableWidth() {
         return (this.state.tableSize * 34) - this.state.tableSize;
     }
@@ -129,9 +201,14 @@ export class GameContainer extends React.Component<IPropsGameContainer, IStateGa
                     />
                     <Game tableSize={this.state.tableSize}
                           playGame={this.state.playGame}
-                          startPlayer={this.state.player1}
+                          startPlayer={this.state.player1 === "X" ? GameToken.X : GameToken.O}
                           rowWinLength={this.state.rowWinLength}
                           tableWidth={tableWidth}
+                          createNewCalculationInstance={this.state.createNewCalculationInstance}
+                          onGameStateChangeHandler={this.onGameStateChangeHandler.bind(this)}
+                    />
+                    <GameNotification cssClasses={"game-notification"}
+                                      content={this.state.gameNotification}
                     />
                 </div>
             </div>

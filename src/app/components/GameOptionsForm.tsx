@@ -14,16 +14,25 @@ export interface IStateGameOptionsFormData extends GameOptionsProperties {
 
 }
 
+/**
+ * Form to interact with the user. Passing the input parameter to the game option.
+ */
 export class GameOptionsForm extends React.Component<IPropsGameOptionsFormData, IStateGameOptionsFormData> {
     constructor(props: IPropsGameOptionsFormData) {
         super(props);
     }
 
     render(): React.ReactNode {
+        /**
+         * the player tokens to the particular input
+         **/
         const playerTokens: string[] = [];
         playerTokens.push("O");
         playerTokens.push("X");
 
+        /**
+         * options for select the tableSize
+         **/
         const tableSizes: string[] = [];
         for (let i = 5; i <= 18; i++)
             tableSizes.push(i.toString(10));
@@ -35,7 +44,7 @@ export class GameOptionsForm extends React.Component<IPropsGameOptionsFormData, 
                     <li>
                         {/*INPUT TABLE SIZE*/}
                         <ComboBoxInput id={"#table-size"}
-                                       defaultValue={this.props.tableSize.toString()}
+                                       value={this.props.tableSize.toString()}
                                        isDisabled={this.props.isInputsDisabled}
                                        options={tableSizes}
                                        onChangeHandler={this.props.onChangeInputHandler}
@@ -44,7 +53,7 @@ export class GameOptionsForm extends React.Component<IPropsGameOptionsFormData, 
                     <li>
                         {/*INPUT TOKENS IN ROW*/}
                         <ComboBoxInput id={"#tokens-in-row"}
-                                       defaultValue={this.props.rowWinLength.toString()}
+                                       value={this.props.rowWinLength.toString()}
                                        isDisabled={this.props.isInputsDisabled}
                                        options={["3", "4", "5"]}
                                        onChangeHandler={this.props.onChangeInputHandler}
@@ -53,7 +62,7 @@ export class GameOptionsForm extends React.Component<IPropsGameOptionsFormData, 
                     <li>
                         {/*INPUT PLAYER-1*/}
                         <ComboBoxInput id={"#player-1"}
-                                       defaultValue={this.props.player1 === 0 ? "X" : "0"}
+                                       value={this.props.player1}
                                        options={playerTokens}
                                        isDisabled={this.props.isInputsDisabled}
                                        onChangeHandler={this.props.onChangeInputHandler}
@@ -62,7 +71,7 @@ export class GameOptionsForm extends React.Component<IPropsGameOptionsFormData, 
                     <li>
                         {/*INPUT PLAYER-2*/}
                         <ComboBoxInput id={"#player-2"}
-                                       defaultValue={this.props.player2 === 0 ? "X" : "O"}
+                                       value={this.props.player2}
                                        isDisabled={this.props.isInputsDisabled}
                                        options={playerTokens}
                                        onChangeHandler={this.props.onChangeInputHandler}

@@ -37,3 +37,13 @@ body {
     display: block;
     font-family: "Indie Flower", cursive, "Merriweather", serif;
 }
+
+/*GAME NOTIFICATION*/
+.game-notification {
+    width: 200px;
+    font-family: "Century Fox", sans-serif;
+    font-size: 25px;
+    float: left;
+    text-align: inherit;
+    margin-left: 10px;
+}

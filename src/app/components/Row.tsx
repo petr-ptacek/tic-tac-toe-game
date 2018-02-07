@@ -4,7 +4,6 @@ import * as React from "react";
 import {GameToken} from "../game/GameToken";
 import {Cell} from "./Cell";
 
-
 export interface IPropsRowData {
     cells: GameToken[];
     id: number;
@@ -29,7 +28,7 @@ export class Row extends React.Component<IPropsRowData, IStateRowData> {
     }
 
     /**
-     * Create a particular number of cell.
+     * Create a particular number of cells.
      * @returns {Array<React.ReactNode>} cells
      */
     private createCells(): Array<React.ReactNode> {
@@ -43,7 +42,6 @@ export class Row extends React.Component<IPropsRowData, IStateRowData> {
                              playGame={this.props.playGame}
                              onClickCellHandler={this.onClickCellHandler.bind(this)}/>);
         });
-
         return cells;
     }
 

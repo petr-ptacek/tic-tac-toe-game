@@ -10,15 +10,11 @@ export interface IPropsCellData {
 }
 
 export interface IStateCellData {
-    classClicked: string;
 }
 
 export class Cell extends React.Component<IPropsCellData, IStateCellData> {
     constructor(props: IPropsCellData) {
         super(props);
-        this.state = {
-            classClicked: ""
-        };
     }
 
     render(): React.ReactNode {
@@ -34,23 +30,14 @@ export class Cell extends React.Component<IPropsCellData, IStateCellData> {
                 break;
         }
 
-        if (!this.props.playGame) {
-            classStyles = "tic-tac-toe-cell";
-        } else {
-            classStyles = "tic-tac-toe-cell" + this.state.classClicked;
-            classStyles += this.props.playGame ? " empty-cell" : "";
-        }
+        classStyles = "tic-tac-toe-cell";
+        classStyles += this.props.playGame ? " empty-cell" : "";
 
         return (
             <div className={classStyles}
                  onClick={() => {
                      if (this.props.playGame) {
                          this.props.onClickCellHandler(this.props.id);
-                         this.setState(() => {
-                             return {
-                                 classClicked: " full-cell"
-                             }
-                         });
                      }
                  }}>
                 {token}
