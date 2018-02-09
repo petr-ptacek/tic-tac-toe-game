@@ -31,6 +31,10 @@ export class Board extends React.Component<IPropsBoardData, IStateBoardData> {
         this.props.onClickCellHandler(location);
     }
 
+    /**
+     * Creates the particular number of table rows.
+     * @returns {Array<React.ReactNode>}
+     */
     private createRows(): Array<React.ReactNode> {
         const table: GameToken[][] = this.props.table.slice();
         const rows: React.ReactNode[] = [];

@@ -28,6 +28,7 @@ export interface IPropsGameData {
     playGame: boolean;
     tableWidth: number;
     createNewCalculationInstance: boolean;
+    isWinOrDraw: boolean;
     onGameStateChangeHandler: (gameResult: GameResult, player?: GameToken) => void;
 }
 
@@ -45,16 +46,32 @@ export class Game extends React.Component<IPropsGameData, IStateGameData> {
      */
     private calculation: Calculations;
 
+    /**
+     * Indicator if the game is in the state win or draw.
+     */
+    private isWinOrDraw: boolean;
+
     constructor(props: IPropsGameData) {
         super(props);
+        this.isWinOrDraw = false;
         this.createCalculation(props);
         this.state = {
             table: this.calculation.createTable()
         };
     }
 
+    /**
+     * Very important method. It is create new instance of table, only the game is in state play.
+     * And if is detected the win or draw, the instance of table is not created.
+     * @param {Readonly<IPropsGameData>} nextProps
+     * @param nextContext
+     */
     componentWillReceiveProps(nextProps: Readonly<IPropsGameData>, nextContext: any): void {
-        if (!nextProps.playGame) {
+        if (!nextProps.playGame && this.props.isWinOrDraw === nextProps.isWinOrDraw) {
+            this.reinitializedCalculation(nextProps);
+        }
+
+        if (this.props.isWinOrDraw) {
             this.reinitializedCalculation(nextProps);
         }
     }
@@ -108,7 +125,10 @@ export class Game extends React.Component<IPropsGameData, IStateGameData> {
 
         let gameResult: GameResult = this.calculation.addToken(location, this.updateTable.bind(this));
 
-        if (gameResult !== GameResult.Win) {
+        /**
+         * I need change the player, only if the game is in the state of CONTINUE
+         */
+        if (gameResult === GameResult.Continue) {
             this.calculation.switchCurrentPlayer();
         }
 

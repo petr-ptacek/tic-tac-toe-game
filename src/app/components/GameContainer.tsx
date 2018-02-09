@@ -26,6 +26,7 @@ export interface IPropsGameContainer {
 
 export interface IStateGameContainer extends GameOptionsProperties {
     playGame: boolean;
+    isWinOrDraw: boolean;
     gameNotification: string;
     createNewCalculationInstance: boolean;
 }
@@ -45,6 +46,7 @@ export class GameContainer extends React.Component<IPropsGameContainer, IStateGa
             rowWinLength: 5,
             tableSize: 5,
             playGame: false,
+            isWinOrDraw: false,
             createNewCalculationInstance: true,
             gameNotification: "To start game, click to Play Game."
         }
@@ -58,6 +60,7 @@ export class GameContainer extends React.Component<IPropsGameContainer, IStateGa
                     return {
                         gameNotification: ("Win Player: " + (currentPlayer === GameToken.O ? "O" : "X")),
                         playGame: false,
+                        isWinOrDraw: true,
                         isButtonCancelDisabled: true,
                         isButtonOKDisabled: false,
                         isInputsDisabled: false,
@@ -70,6 +73,7 @@ export class GameContainer extends React.Component<IPropsGameContainer, IStateGa
                     return {
                         gameNotification: "Hops, the game is Draw.",
                         playGame: false,
+                        isWinOrDraw: true,
                         isInputsDisabled: false,
                         isButtonCancelDisabled: true,
                         isButtonOKDisabled: false,
@@ -96,6 +100,7 @@ export class GameContainer extends React.Component<IPropsGameContainer, IStateGa
             return {
                 gameNotification: "Current player: " + this.state.player1,
                 playGame: true,
+                isWinOrDraw: false,
                 isButtonOKDisabled: true,
                 isInputsDisabled: true,
                 isButtonCancelDisabled: false
@@ -169,6 +174,14 @@ export class GameContainer extends React.Component<IPropsGameContainer, IStateGa
                 });
                 break;
         }
+
+        if (this.state.isWinOrDraw) {
+            this.setState(() => {
+                return {
+                    gameNotification: "To start game, click to Play Game."
+                };
+            });
+        }
     }
 
     /**
@@ -201,6 +214,7 @@ export class GameContainer extends React.Component<IPropsGameContainer, IStateGa
                     />
                     <Game tableSize={this.state.tableSize}
                           playGame={this.state.playGame}
+                          isWinOrDraw={this.state.isWinOrDraw}
                           startPlayer={this.state.player1 === "X" ? GameToken.X : GameToken.O}
                           rowWinLength={this.state.rowWinLength}
                           tableWidth={tableWidth}

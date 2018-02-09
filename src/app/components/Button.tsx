@@ -19,7 +19,11 @@ export class Button extends React.Component<IPropsButtonData, IStateButtonData> 
     }
 
 
-    private onclickHandler(event: React.MouseEvent<HTMLInputElement>) {
+    /**
+     * Handler for click event.
+     * @param {React.MouseEvent<HTMLInputElement>} event
+     */
+    private onclickHandler(event: React.MouseEvent<HTMLInputElement>): void {
         event.preventDefault();
         event.stopPropagation();
         this.props.onButtonClickHandler(this.props.id);

@@ -17,11 +17,10 @@ export class Cell extends React.Component<IPropsCellData, IStateCellData> {
         super(props);
     }
 
-    render(): React.ReactNode {
-        let token: string;
-        let classStyles: string;
+    private static gameToken2String(gameToken: GameToken): string {
+        let token;
 
-        switch (this.props.token) {
+        switch (gameToken) {
             case GameToken.X:
                 token = "X";
                 break;
@@ -29,6 +28,12 @@ export class Cell extends React.Component<IPropsCellData, IStateCellData> {
                 token = "O";
                 break;
         }
+
+        return token;
+    }
+
+    render(): React.ReactNode {
+        let classStyles: string;
 
         classStyles = "tic-tac-toe-cell";
         classStyles += this.props.playGame ? " empty-cell" : "";
@@ -40,7 +45,7 @@ export class Cell extends React.Component<IPropsCellData, IStateCellData> {
                          this.props.onClickCellHandler(this.props.id);
                      }
                  }}>
-                {token}
+                {Cell.gameToken2String(this.props.token)}
             </div>
         );
     }

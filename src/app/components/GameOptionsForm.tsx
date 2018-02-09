@@ -15,6 +15,19 @@ export interface IStateGameOptionsFormData extends GameOptionsProperties {
 }
 
 /**
+ * the player tokens to the particular input
+ **/
+const playerTokens: string[] = ["O", "X"];
+
+/**
+ * options for select the tableSize
+ **/
+const tableSizes: string[] = [];
+for (let i = 5; i <= 18; i++)
+    tableSizes.push(i.toString(10));
+
+
+/**
  * Form to interact with the user. Passing the input parameter to the game option.
  */
 export class GameOptionsForm extends React.Component<IPropsGameOptionsFormData, IStateGameOptionsFormData> {
@@ -23,20 +36,6 @@ export class GameOptionsForm extends React.Component<IPropsGameOptionsFormData, 
     }
 
     render(): React.ReactNode {
-        /**
-         * the player tokens to the particular input
-         **/
-        const playerTokens: string[] = [];
-        playerTokens.push("O");
-        playerTokens.push("X");
-
-        /**
-         * options for select the tableSize
-         **/
-        const tableSizes: string[] = [];
-        for (let i = 5; i <= 18; i++)
-            tableSizes.push(i.toString(10));
-
         return (
             <form className={"form-style-1"}>
                 <legend>Game Options</legend>

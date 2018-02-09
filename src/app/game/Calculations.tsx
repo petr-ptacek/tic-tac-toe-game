@@ -32,9 +32,24 @@ export class Calculations {
         [1, -1]
     ];
 
+    /**
+     * The current player.
+     */
     private currentPlayer: GameToken;
+
+    /**
+     * The length of the line with the same tokens needed to win.
+     */
     private readonly rowWinLength: number;
+
+    /**
+     * The size of the table in structure tableSize * tableSize
+     */
     private readonly tableSize: number;
+
+    /**
+     * Total numbers of all possible combinations to win.
+     */
     private totalRowsCount: number;
 
     constructor(gameOptions: IGameOptions) {
@@ -52,7 +67,6 @@ export class Calculations {
      * Create game table.
      * @returns {GameToken[][]} gameTable
      */
-
     public createTable(): GameToken[][] {
         const table: GameToken[][] = [];
         let temp: GameToken[] = [],
@@ -69,6 +83,12 @@ export class Calculations {
         return table;
     }
 
+    /**
+     * The procedure, with the added a token.
+     * @param {ILocationClick} location
+     * @param {(location: ILocationClick) => void} callbackUpdateTable
+     * @returns {GameResult}
+     */
     public addToken(location: ILocationClick, callbackUpdateTable: (location: ILocationClick) => void): GameResult {
         let result: GameResult = GameResult.Continue;
 
@@ -132,14 +152,28 @@ export class Calculations {
             GameResult.Continue;
     }
 
+    /**
+     * Switch the current player.
+     */
     public switchCurrentPlayer(): void {
         this.currentPlayer = this.currentPlayer === GameToken.X ? GameToken.O : GameToken.X;
     }
 
+    /**
+     * Recognize if the cell in the particular location is empty.
+     * @param {ILocationClick} location
+     * @param {GameToken[][]} table
+     * @returns {boolean}
+     */
     public static isInsertedLocationEmpty(location: ILocationClick, table: GameToken[][]): boolean {
         return table[location.x][location.y] === GameToken.EMPTY;
     }
 
+    /**
+     * Deep copy of the 2D array.
+     * @param {T[][]} from
+     * @returns {T[][]}
+     */
     public static deepCopy2dArray<T>(from: T[][]): T[][] {
         let result: T[][] = [];
 
@@ -152,6 +186,10 @@ export class Calculations {
         return result;
     }
 
+    /***
+     * Return the current played player.
+     * @returns {GameToken}
+     */
     public getCurrentPlayer(): GameToken {
         return this.currentPlayer;
     }

@@ -23,7 +23,11 @@ export class ComboBoxInput extends React.Component<IPropsComboBoxInputData, ISta
     }
 
     render(): React.ReactNode {
-        const options = this.props.options.map((option, index) => {
+        /**
+         * Prepare of the options for the <select> element
+         * @type {React.ReactNode[]}
+         */
+        const options: React.ReactNode[] = this.props.options.map((option, index) => {
             return <option key={index}
                            value={option}>{option}</option>;
         });

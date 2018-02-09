@@ -11,10 +11,6 @@ export interface IStateCurrentPlayerLabel {
 export class GameNotification extends React.Component<IPropsCurrentPlayerLabel, IStateCurrentPlayerLabel> {
     constructor(props: IPropsCurrentPlayerLabel) {
         super(props);
-        this.state = {
-            content: this.props.content
-        };
-
     }
 
     render(): React.ReactNode {
