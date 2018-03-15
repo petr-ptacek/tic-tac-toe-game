@@ -82,7 +82,6 @@ export class GameContainer extends React.Component<IPropsGameContainer, IStateGa
                 });
                 break;
             case GameResult.Continue:
-                console.log(currentPlayer === GameToken.O ? "O" : "X");
                 this.setState(() => {
                     return {
                         gameNotification: "Current player: " + (currentPlayer === GameToken.O ? "O" : "X"),

@@ -2,7 +2,6 @@ import {GameToken} from "./GameToken";
 import {ILocationClick} from "../components/Game";
 import {GameResult} from "./GameResult";
 import {Direction} from "./Direction";
-import {Coords} from "./Coords";
 
 export interface IGameOptions {
     tableSize: number;
@@ -11,27 +10,6 @@ export interface IGameOptions {
 }
 
 export class Calculations {
-
-    /**
-     * 1. coordinates {0, 1, ... countRows}
-     * 2. coordinates {0, 1, ... countCells}
-     * 3. direction {Z, SZ, S, SV}
-     * 4. player
-     */
-    private tokenInRow: number[][][][];
-
-    /**
-     * 1. direction {Z, SZ, S, SV}
-     * 2. coordinates {X, Y}
-     * @type {number[][]}
-     */
-    private readonly directionSigns: number[][] = [
-        [-1, 0],
-        [-1, -1],
-        [0, -1],
-        [1, -1]
-    ];
-
     /**
      * The current player.
      */
@@ -47,20 +25,13 @@ export class Calculations {
      */
     private readonly tableSize: number;
 
-    /**
-     * Total numbers of all possible combinations to win.
-     */
-    private totalRowsCount: number;
+    private countInsertedTokens: number;
 
     constructor(gameOptions: IGameOptions) {
         this.tableSize = gameOptions.tableSize;
         this.currentPlayer = gameOptions.startPlayer;
         this.rowWinLength = gameOptions.rowWinLength;
-
-        this.totalRowsCount = 4 * ((2 * this.tableSize - (this.rowWinLength - 1)) *
-            (this.tableSize - (this.rowWinLength - 1)));
-
-        this.tokenInRow = this.clearTokensInRow();
+        this.countInsertedTokens = 0;
     }
 
     /**
@@ -84,72 +55,221 @@ export class Calculations {
     }
 
     /**
-     * The procedure, with the added a token.
+     * Checks the game result
+     * @param {GameToken[][]} table
      * @param {ILocationClick} location
-     * @param {(location: ILocationClick) => void} callbackUpdateTable
      * @returns {GameResult}
      */
-    public addToken(location: ILocationClick, callbackUpdateTable: (location: ILocationClick) => void): GameResult {
-        let result: GameResult = GameResult.Continue;
+    public checkGameResult(table: GameToken[][], location: ILocationClick): GameResult {
+        let gameResult: GameResult = GameResult.Continue;
 
-        for (let direction = Direction.Z; direction <= Direction.SV; direction++) {
-            for (let pos = 0; pos < this.rowWinLength; pos++) {
-                let directHor = this.directionSigns[direction][Coords.X];
-                let directVer = this.directionSigns[direction][Coords.Y];
-                let posX = location.x + pos * directHor;
-                let posY = location.y + pos * directVer;
+        if (this.checkWin(table, location)) {
+            gameResult = GameResult.Win;
+        }
 
-                if (((directHor === -1 && posX >= 0 && posX <= this.tableSize - this.rowWinLength) ||
-                        (directHor === 1 && posX >= this.rowWinLength - 1 && posX < this.tableSize) ||
-                        (directHor === 0)) &&
-                    ((directVer === -1 && posY >= 0 && posY <= this.tableSize - this.rowWinLength) ||
-                        (directVer === 1 && posY >= this.rowWinLength - 1 && posY < this.tableSize) ||
-                        (directVer === 0))) {
-                    result = this.includeInsertToken(posX, posY, direction);
-                    if (result !== GameResult.Continue) {
-                        break;
-                    }
-                }
+        if (++this.countInsertedTokens === (this.tableSize * this.tableSize)) {
+            gameResult = GameResult.Draw;
+        }
+
+        return gameResult;
+    }
+
+    /**
+     * Check the game state WIN.
+     * @param {GameToken[][]} table
+     * @param {ILocationClick} location
+     * @returns {boolean}
+     */
+    private checkWin(table: GameToken[][], location: ILocationClick): boolean {
+        return this.checkWinHorizontal(table, location) ||
+            this.checkWinVertical(table, location) ||
+            this.checkWinRightTopToLeftBottom(table, location) ||
+            this.checkWinLeftTopToRightBottom(table, location);
+    }
+
+    /**
+     * Check the game state WIN for LeftTopToRightBottom corner line of clickLocation
+     * @param {GameToken[][]} table
+     * @param {ILocationClick} location
+     * @returns {boolean}
+     */
+    private checkWinLeftTopToRightBottom(table: GameToken[][], location: ILocationClick): boolean {
+        let counter: number = 1,
+            posX: number,
+            posY: number,
+            step: number;
+
+        for (step = 1; step < this.rowWinLength; step++) {
+            posX = location.x - step;
+            posY = location.y - step;
+
+            if (!this.isInTableRange(posX) || !this.isInTableRange(posY)) {
+                break;
             }
-            if (result !== GameResult.Continue) {
+
+            if (table[posX][posY] === this.currentPlayer) {
+                counter++;
+            } else {
                 break;
             }
         }
-        callbackUpdateTable(location);
 
-        if (result === GameResult.Continue && this.totalRowsCount <= 0)
-            result = GameResult.Draw;
+        for (step = 1; step < this.rowWinLength; step++) {
+            posX = location.x + step;
+            posY = location.y + step;
 
-        return result;
-    }
+            if (!this.isInTableRange(posX) || !this.isInTableRange(posX)) {
+                break;
+            }
 
-    private clearTokensInRow(): number[][][][] {
-        let result: number[][][][] = [];
-
-        for (let i = 0; i < this.tableSize; i++) {
-            result[i] = [];
-            for (let j = 0; j < this.tableSize; j++) {
-                result[i][j] = [];
-                for (let direction = Direction.Z; direction <= Direction.SV; direction++) {
-                    result[i][j][direction] = [];
-                    for (let token = GameToken.X; token <= GameToken.O; token++) {
-                        result[i][j][direction][token] = 0;
-                    }
-                }
+            if (table[posX][posY] === this.currentPlayer) {
+                counter++;
+            } else {
+                break;
             }
         }
-        return result;
+
+        return counter === this.rowWinLength;
     }
 
-    public includeInsertToken(posX: number, posY: number, direction: Direction): GameResult {
-        this.tokenInRow[posX][posY][direction][this.currentPlayer]++;
+    /**
+     * Check the game state WIN for RightTopToLeftBottom corner line of clickLocation
+     * @param {GameToken[][]} table
+     * @param {ILocationClick} location
+     * @returns {boolean}
+     */
+    private checkWinRightTopToLeftBottom(table: GameToken[][], location: ILocationClick): boolean {
+        let counter: number = 1,
+            posX: number,
+            posY: number,
+            step: number;
 
-        if (this.tokenInRow[posX][posY][direction][this.currentPlayer] === 1)
-            this.totalRowsCount--;
+        for (step = 1; step < this.rowWinLength; step++) {
+            posY = location.y - step;
+            posX = location.x + step;
 
-        return this.tokenInRow[posX][posY][direction][this.currentPlayer] === this.rowWinLength ?
-            GameResult.Win :
-            GameResult.Continue;
+            if (!this.isInTableRange(posX) || !this.isInTableRange(posY)) {
+                break;
+            }
+
+            if (table[posX][posY] === this.currentPlayer) {
+                counter++;
+            } else {
+                break;
+            }
+        }
+
+        for (step = 1; step < this.rowWinLength; step++) {
+            posY = location.y + step;
+            posX = location.x - step;
+
+            if (!this.isInTableRange(posX) || !this.isInTableRange(posY)) {
+                break;
+            }
+
+            if (table[posX][posY] === this.currentPlayer) {
+                counter++;
+            } else {
+                break;
+            }
+        }
+
+        return counter === this.rowWinLength;
+    }
+
+    /**
+     * Check the game state WIN for vertical line of clickLocation
+     * @param {GameToken[][]} table
+     * @param {ILocationClick} location
+     * @returns {boolean}
+     */
+    private checkWinVertical(table: GameToken[][], location: ILocationClick): boolean {
+        let counter: number = 1,
+            posX: number,
+            posY: number = location.y,
+            step: number;
+
+        // to up from click
+        for (step = 1; step < this.rowWinLength; step++) {
+            posX = location.x - step;
+            if (!this.isInTableRange(posX)) {
+                break;
+            }
+
+            if (table[posX][posY] === this.currentPlayer) {
+                counter++;
+            } else {
+                break;
+            }
+        }
+
+        // to down from click
+        for (step = 1; step < this.rowWinLength; step++) {
+            posX = location.x + step;
+            if (!this.isInTableRange(posX)) {
+                break;
+            }
+
+            if (table[posX][posY] === this.currentPlayer) {
+                counter++;
+            } else {
+                break;
+            }
+        }
+
+        return counter === this.rowWinLength;
+    }
+
+    /**
+     * Check the game state WIN for horizontal line of clickLocation
+     * @param {GameToken[][]} table
+     * @param {ILocationClick} location
+     * @returns {boolean}
+     */
+    private checkWinHorizontal(table: GameToken[][], location: ILocationClick): boolean {
+        let counter: number = 1,
+            posY: number,
+            posX: number = location.x,
+            step: number;
+
+        // to left from click
+        for (step = 1; step < this.rowWinLength; step++) {
+            posY = location.y - step;
+            if (!this.isInTableRange(posY)) {
+                break;
+            }
+
+            if (table[posX][posY] === this.currentPlayer) {
+                counter++;
+            } else {
+                break;
+            }
+        }
+
+        // to right from click
+        for (step = 1; step < this.rowWinLength; step++) {
+            posY = location.y + step;
+            if (!this.isInTableRange(posY)) {
+                break;
+            }
+
+            if (table[posX][posY] === this.currentPlayer) {
+                counter++;
+            } else {
+                break;
+            }
+        }
+
+        return counter === this.rowWinLength;
+    }
+
+    /**
+     * Resolve, that given index is in the border boundary.
+     * @param {number} index
+     * @returns {boolean}
+     */
+    private isInTableRange(index: number): boolean {
+        return index >= 0 && index < this.tableSize;
     }
 
     /**

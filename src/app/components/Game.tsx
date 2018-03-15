@@ -123,7 +123,9 @@ export class Game extends React.Component<IPropsGameData, IStateGameData> {
             return;
         }
 
-        let gameResult: GameResult = this.calculation.addToken(location, this.updateTable.bind(this));
+        let gameResult: GameResult = this.calculation.checkGameResult(this.state.table, location);
+
+        this.updateTable(location);
 
         /**
          * I need change the player, only if the game is in the state of CONTINUE
